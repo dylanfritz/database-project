@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User #django built-n user model
 
 # Create your models here.
 class Post(models.Model):
@@ -14,8 +15,8 @@ class Ingredient(models.Model):
         return self.name
     
 class Recipe(models.Model):
-    recipe_id = models.PositiveIntegerField(primary_key=True)
-    prep_time = models.TimeField()
+    u_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    prep_time = models.PositiveIntegerField(help_text="Preparation time in minutes")
     name = models.CharField(max_length=100)
     desc = models.TextField(blank=True)
     instructions = models.TextField()
@@ -25,7 +26,7 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-
+# Recipe-Ingredient CALLS_FOR relationship
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
@@ -35,3 +36,10 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.quantity} {self.unit} of {self.ingredient.name} in {self.recipe.name}"
+
+class Stocks(models.Model):
+    u_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+
+    quantity = models.DecimalField(max_digits=5, decimal_places=2) # max 999.99
+    unit = models.CharField(max_length=20) # e.g., 'tsp', 'cups', 'grams'
