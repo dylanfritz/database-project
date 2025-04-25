@@ -1,4 +1,5 @@
-<!-- recipe_detail.html -->
+<!-- recipe_page.html -->
+<!-- this is for displaying a specific Recipe -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +10,14 @@
     <p><strong>Description:</strong> {{ recipe.desc }}</p>
     <p><strong>Calories:</strong> {{ recipe.calories }}</p>
 
+    <!--List Ingredients-->
+    <h2>Ingredients</h2>
+    <ul>
+        {% for ri in recipe.recipe_ingredients.all %}
+    <li>{{ ri.quantity }} {{ ri.unit }} of {{ ri.ingredient.name }}</li>
+        {% endfor %}
+    </ul>
+    
     <p><strong>Instructions</strong> {{ recipe.instructions }}</p>
     <a href="/">Back to Home</a>
 </body>

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Recipe, Ingredient
+from django.forms import inlineformset_factory
+from .models import Recipe, Ingredient, RecipeIngredient
 
 # recipes
 class RecipeForm(forms.ModelForm):
@@ -8,10 +9,26 @@ class RecipeForm(forms.ModelForm):
     model = Recipe
     fields = ['name', 'desc', 'instructions', 'prep_time']
 
+# this form is for adding ingredients to a recipe
+class RecipeIngredientForm(forms.ModelForm):
+    # TODO
+    # Add ability to make new ingredient if not in dropdown list
+    class Meta:
+        model = RecipeIngredient
+        fields = ['ingredient', 'quantity', 'unit']
+        widgets = {
+            'ingredient': forms.Select(attrs={'class': 'ingredient-select'})
+        }
+
+RecipeIngredientFormSet = inlineformset_factory(
+    Recipe, RecipeIngredient, form=RecipeIngredientForm, extra=1, can_delete=True
+)
+
 # TODO
 # ingredients
 # shopping list
 # recipe list
+
 # account registration
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)

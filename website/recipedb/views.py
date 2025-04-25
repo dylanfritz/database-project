@@ -2,33 +2,48 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
-from .forms import RecipeForm, SignUpForm
-
+from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
 
 # Create your views here.
 from django.http import HttpResponse
-
 from .models import Recipe
 
 def home(request):
     return render(request, 'recipedb/home.html')
 
+# for viewing a specific recipe
 def recipe_page(request, id):
     recipe = get_object_or_404(Recipe, id=id)
     return render(request, 'recipedb/recipe_page.html', {'recipe': recipe})
 
+# for viewing a list of all recipes
+def recipe_view(request):
+    recipes = Recipe.objects.all()
+    return render(request, 'recipedb/recipe_view.html', {'recipes': recipes})
+
+# for creating a new recipe
 @login_required
 def add_recipe(request):
     if request.method == 'POST':
         form = RecipeForm(request.POST)
-        if form.is_valid():
-            form.instance.u_id = request.user
-            form.save()  # or do something else with the data
-            return redirect('home')  # or wherever you want to go after
+        formset = RecipeIngredientFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            recipe = form.save(commit=False)
+            recipe.u_id = request.user
+            recipe.save()
+            formset.instance = recipe
+            formset.save()
+            return redirect('home')  # or wherever
     else:
         form = RecipeForm()
-    return render(request, 'recipedb/add_recipe.html', {'form': form})
+        formset = RecipeIngredientFormSet()
+    
+    return render(request, 'recipedb/add_recipe.html', {
+        'form': form,
+        'formset': formset,
+    })
 
+# for creating new account
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)

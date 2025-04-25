@@ -1,6 +1,43 @@
-<h2>Add a Recipe</h2>
+{# templates/recipedb/add_recipe.html #}
+
 <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
+  {% csrf_token %}
+  {{ form.as_p }}
+  {{ formset.management_form }}
+  <div id="formset-container">
+    {% for form in formset %}
+      <div class="ingredient-form">
+        {{ form.as_p }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <button type="button" id="add-form">Add Ingredient</button>
+  <button type="submit">Submit</button>
 </form>
+
+<!-- Optional: Include jQuery + Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addFormBtn = document.getElementById('add-form');
+    const formContainer = document.getElementById('formset-container');
+    let formIdx = {{ formset.total_form_count }};
+
+    addFormBtn.addEventListener('click', () => {
+      const newForm = formContainer.children[0].cloneNode(true);
+      newForm.innerHTML = newForm.innerHTML.replace(/form-(\d)-/g, `form-${formIdx}-`);
+      formContainer.appendChild(newForm);
+      document.getElementById('id_form-TOTAL_FORMS').value = formIdx + 1;
+      formIdx++;
+    });
+
+    $('.ingredient-select').select2({
+      placeholder: "Select an ingredient",
+      allowClear: true
+    });
+  });
+</script>
