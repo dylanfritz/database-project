@@ -28,9 +28,12 @@ class Recipe(models.Model):
 
     # Recipe-Ingredient relationship
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
-    
+
     def __str__(self):
         return self.name
+    
+# User Preferences (Recipe), M:N relationship
+User.add_to_class('preferred_recipes', models.ManyToManyField(Recipe, related_name='preferred_by'))
 
 # Recipe-Ingredient CALLS_FOR relationship model
 class RecipeIngredient(models.Model):
@@ -73,8 +76,12 @@ class ShoppingList(List):
     ingredients = models.ManyToManyField('Ingredient', related_name='in_shopping_list')
 
 
-# User Preferences (Recipe), M:N relationship
+
+
 # User Restrictions (Ingredient), M:N relationship
+
+
+
 ###
 # After making a model, don't forget to
 #   register models in admin.py !

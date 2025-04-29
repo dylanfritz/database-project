@@ -7,8 +7,40 @@
 </head>
 <body>
     <h1>{{ recipe.name }}</h1>
+
+    <!--Add recipe as preference-->
+    <button id="favorite-btn" data-recipe-id="{{ recipe.id }}">
+        {% if recipe in user.preferred_recipes.all %}
+          ★
+        {% else %}
+          ☆
+        {% endif %}
+      </button>
+      
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+        $('#favorite-btn').click(function (e) {
+          e.preventDefault();
+          const recipeId = $(this).data('recipe-id');
+          const btn = $(this);
+      
+          $.ajax({
+            url: `/recipe/${recipeId}/toggle_preference/`,
+            type: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            success: function (response) {
+              if (response.status === 'added') {
+                btn.text('★');  // filled star
+              } else {
+                btn.text('☆');  // empty star
+              }
+            }
+          });
+        });
+      </script>      
+
     <p><strong>Description:</strong> {{ recipe.desc }}</p>
-    <!--TODO: change this to calculatet calories based on ingredients list-->
+    <!--TODO: change this to calculate calories based on ingredients list-->
     <p><strong>Calories:</strong> {{ recipe.calories }}</p>
 
     <!--List Ingredients-->

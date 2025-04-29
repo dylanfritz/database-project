@@ -10,4 +10,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(), name='login'),  # Django's built-in login view
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),  # Django's built-in logout view
     path('recipe-view/', views.recipe_view, name='recipe_view'),
+    path('recipe/<int:recipe_id>/toggle_preference/', views.toggle_preference, name='toggle_preference'),
 ]

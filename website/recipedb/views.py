@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.http import require_POST
 from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
+from django.http import JsonResponse
+
 
 # Create your views here.
 from django.http import HttpResponse
@@ -42,6 +45,20 @@ def add_recipe(request):
         'form': form,
         'formset': formset,
     })
+
+# handle adding a recipe to user's preferences
+@require_POST
+@login_required
+def toggle_preference(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    user = request.user
+    if recipe in user.preferred_recipes.all():
+        user.preferred_recipes.remove(recipe)
+        status = 'removed'
+    else:
+        user.preferred_recipes.add(recipe)
+        status = 'added'
+    return JsonResponse({'status': status})
 
 # for creating new account
 def signup(request):
