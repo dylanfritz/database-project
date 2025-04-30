@@ -23,10 +23,20 @@
         <td>{{ ingredient.substitutes.name }}</td>
         <td>
           {% if ingredient.name in restricted_ingredients %}
-            Yes
+              ✅
           {% else %}
-            —
+              —
           {% endif %}
+
+          <button class="restrict-btn"
+          data-name="{{ ingredient.name }}">
+          {% if ingredient in restricted_ingredients %}
+              Unrestrict
+          {% else %}
+              Restrict
+          {% endif %}
+          </button>
+          
         </td>
         <!-- Add more cells if needed -->
       </tr>
@@ -37,3 +47,29 @@
     {% endfor %}
   </tbody>
 </table>
+
+<script>
+  document.querySelectorAll('.restrict-btn').forEach(function(button) {
+      button.addEventListener('click', function() {
+          const ingredientName = this.dataset.name;
+          const btn = this;
+  
+          fetch("{% url 'toggle_restricted_ingredient' %}", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ 'ingredient_name': ingredientName })
+          }).then(response => response.json())
+            .then(data => {
+                if (data.status === 'restricted') {
+                    btn.textContent = 'Unrestrict';
+                } else if (data.status === 'unrestricted') {
+                    btn.textContent = 'Restrict';
+                }
+            });
+      });
+  });
+  </script>
+  

@@ -6,6 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
 from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
 from django.http import JsonResponse
+import json
 
 
 # Create your views here.
@@ -36,8 +37,38 @@ def ingredient_page(request):
         'ingredients': ingredients,
         'restricted_ingredients': restricted
     }
-    return render(request, 'recipedb/ingredient_page.html', context)
 
+    restricted_ingredients = set(profile.restricted_ingredients.values_list("name", flat=True))
+
+    return render(request, "recipedb/ingredient_page.html", {
+        "ingredients": ingredients,
+        "restricted_ingredients": restricted_ingredients
+    })
+
+# handle restricted ingredient toggling
+@require_POST
+@login_required
+def toggle_restricted_ingredient(request):
+    try:
+        data = json.loads(request.body)
+        ingredient_name = data.get('ingredient_name')
+
+        ingredient = Ingredient.objects.get(name=ingredient_name)
+        profile = request.user.userprofile
+
+        if ingredient in profile.restricted_ingredients.all():
+            profile.restricted_ingredients.remove(ingredient)
+            status = 'unrestricted'
+        else:
+            profile.restricted_ingredients.add(ingredient)
+            status = 'restricted'
+
+        return JsonResponse({'status': status})
+
+    except Ingredient.DoesNotExist:
+        return JsonResponse({'error': 'Ingredient not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 # for viewing a specific recipe
 def recipe_page(request, id):
