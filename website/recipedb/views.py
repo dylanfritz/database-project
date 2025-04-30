@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import UserProfile
+from .models import UserProfile, Ingredient
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
 from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
@@ -19,6 +19,18 @@ def home(request):
 def profile(request):
     profile = request.user.userprofile
     return render(request, 'recipedb/profile.html', {'profile': profile})
+
+# for viewing list of ingredients in database
+def ingredient_page(request):
+    query = request.GET.get('q')
+    if query:
+        ingredients = Ingredient.objects.filter(name__icontains=query)
+    else:
+        ingredients = Ingredient.objects.all()
+    return render(request, 'recipedb/ingredient_page.html', {
+        'ingredients': ingredients,
+        'query': query
+    })
 
 # for viewing a specific recipe
 def recipe_page(request, id):

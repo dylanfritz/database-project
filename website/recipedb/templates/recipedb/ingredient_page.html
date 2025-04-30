@@ -1,0 +1,31 @@
+<h1>All Ingredients</h1>
+
+<form method="get" action=".">
+  <input type="text" name="q" placeholder="Search ingredients..." value="{{ query|default_if_none:'' }}">
+  <button type="submit">Search</button>
+</form>
+
+<table border="1" cellspacing="0" cellpadding="8">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Calories</th>
+      <th>Substitutions</th>
+      <!-- Add more columns if your Ingredient model has them -->
+    </tr>
+  </thead>
+  <tbody>
+    {% for ingredient in ingredients %}
+      <tr>
+        <td>{{ ingredient.name }}</td>
+        <td>{{ ingredient.calories }}</td>
+        <td>{{ ingredient.substitutes.name }}</td>
+        <!-- Add more cells if needed -->
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="3">No ingredients found.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
