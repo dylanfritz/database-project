@@ -26,6 +26,16 @@ RecipeIngredientFormSet = inlineformset_factory(
 
 # TODO
 # ingredients
+# ingredient form
+class IngredientForm(forms.ModelForm):
+    class Meta:
+        model = Ingredient
+        fields = ['name', 'calories', 'substitutes']
+        widgets = {
+            'ingredient': forms.Select(attrs={'class': 'ingredient-select'})
+        }
+
+
 # shopping list
 # recipe list
 

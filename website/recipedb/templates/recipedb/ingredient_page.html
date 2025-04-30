@@ -11,6 +11,7 @@
       <th>Name</th>
       <th>Calories</th>
       <th>Substitutions</th>
+      <th>Restricted</th>
       <!-- Add more columns if your Ingredient model has them -->
     </tr>
   </thead>
@@ -20,6 +21,13 @@
         <td>{{ ingredient.name }}</td>
         <td>{{ ingredient.calories }}</td>
         <td>{{ ingredient.substitutes.name }}</td>
+        <td>
+          {% if ingredient.name in restricted_ingredients %}
+            Yes
+          {% else %}
+            —
+          {% endif %}
+        </td>
         <!-- Add more cells if needed -->
       </tr>
     {% empty %}

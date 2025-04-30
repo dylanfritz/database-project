@@ -22,15 +22,22 @@ def profile(request):
 
 # for viewing list of ingredients in database
 def ingredient_page(request):
-    query = request.GET.get('q')
-    if query:
-        ingredients = Ingredient.objects.filter(name__icontains=query)
-    else:
-        ingredients = Ingredient.objects.all()
-    return render(request, 'recipedb/ingredient_page.html', {
+    ingredients = Ingredient.objects.all()
+    restricted = set()
+
+    if request.user.is_authenticated:
+        try:
+            profile = request.user.userprofile
+            restricted = set(profile.restricted_ingredients.values_list('name', flat=True))
+        except UserProfile.DoesNotExist:
+            pass
+
+    context = {
         'ingredients': ingredients,
-        'query': query
-    })
+        'restricted_ingredients': restricted
+    }
+    return render(request, 'recipedb/ingredient_page.html', context)
+
 
 # for viewing a specific recipe
 def recipe_page(request, id):
