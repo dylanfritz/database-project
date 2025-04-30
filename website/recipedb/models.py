@@ -6,6 +6,15 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
 
+# UserProfile
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # links to django User model 
+    preferred_recipes = models.ManyToManyField('Recipe', blank=True, related_name='liked_by')
+    restricted_ingredients = models.ManyToManyField('Ingredient', blank=True, related_name='restricted_by')
+    
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
 # Ingredient entity
 class Ingredient(models.Model):
     name = models.CharField(max_length=30, primary_key=True)
@@ -31,9 +40,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-    
-# User Preferences (Recipe), M:N relationship
-User.add_to_class('preferred_recipes', models.ManyToManyField(Recipe, related_name='preferred_by'))
 
 # Recipe-Ingredient CALLS_FOR relationship model
 class RecipeIngredient(models.Model):
@@ -75,11 +81,8 @@ class RecipeList(List):
 class ShoppingList(List):
     ingredients = models.ManyToManyField('Ingredient', related_name='in_shopping_list')
 
-
-
-
 # User Restrictions (Ingredient), M:N relationship
-
+# User.add_to_class('restricted_ingredients', models.ManyToManyField(Ingredient, related_name='restricted_by'))
 
 
 ###

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
+from .models import UserProfile
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
 from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
@@ -13,6 +14,11 @@ from .models import Recipe
 
 def home(request):
     return render(request, 'recipedb/home.html')
+
+@login_required
+def profile(request):
+    profile = request.user.userprofile
+    return render(request, 'recipedb/profile.html', {'profile': profile})
 
 # for viewing a specific recipe
 def recipe_page(request, id):
@@ -52,11 +58,11 @@ def add_recipe(request):
 def toggle_preference(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
     user = request.user
-    if recipe in user.preferred_recipes.all():
-        user.preferred_recipes.remove(recipe)
+    if recipe in user.userprofile.preferred_recipes.all():
+        user.userprofile.preferred_recipes.remove(recipe)
         status = 'removed'
     else:
-        user.preferred_recipes.add(recipe)
+        user.userprofile.preferred_recipes.add(recipe)
         status = 'added'
     return JsonResponse({'status': status})
 
@@ -66,6 +72,8 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # create UserProfile
+            UserProfile.objects.create(user=user)
             # Log the user in after sign-up
             login(request, user)
             return redirect('home')  # Redirect to the homepage or any page you like

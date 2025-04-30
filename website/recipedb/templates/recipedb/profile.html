@@ -1,0 +1,19 @@
+<h1>{{ request.user.username }}'s Profile</h1>
+
+<h2>Preferred Recipes</h2>
+<ul>
+  {% for recipe in profile.preferred_recipes.all %}
+    <li>{{ recipe.name }}</li>
+  {% empty %}
+    <li>No favorite recipes yet.</li>
+  {% endfor %}
+</ul>
+
+<h2>Restricted Ingredients</h2>
+<ul>
+  {% for ingredient in profile.restricted_ingredients.all %}
+    <li>{{ ingredient.name }}</li>
+  {% empty %}
+    <li>No restricted ingredients.</li>
+  {% endfor %}
+</ul>
