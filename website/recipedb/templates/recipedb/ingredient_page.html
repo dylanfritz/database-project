@@ -22,22 +22,14 @@
         <td>{{ ingredient.calories }}</td>
         <td>{{ ingredient.substitutes.name }}</td>
         <td>
-          {% if ingredient.name in restricted_ingredients %}
-              ✅
-          {% else %}
-              —
-          {% endif %}
-
           <button class="restrict-btn"
           data-name="{{ ingredient.name }}">
-          {% if ingredient in restricted_ingredients %}
+          {% if ingredient.name in restricted_ingredients %}
               Unrestrict
           {% else %}
               Restrict
           {% endif %}
           </button>
-          
-        </td>
         <!-- Add more cells if needed -->
       </tr>
     {% empty %}

@@ -29,46 +29,47 @@ def ingredient_page(request):
     if request.user.is_authenticated:
         try:
             profile = request.user.userprofile
-            restricted = set(profile.restricted_ingredients.values_list('name', flat=True))
+            restricted = request.user.userprofile.restricted_ingredients.all().values_list('name', flat=True)
         except UserProfile.DoesNotExist:
             pass
 
-    context = {
-        'ingredients': ingredients,
-        'restricted_ingredients': restricted
-    }
+    ingredient_status = {ingredient.name: (ingredient.name in restricted) for ingredient in ingredients}
 
     restricted_ingredients = set(profile.restricted_ingredients.values_list("name", flat=True))
+    ingredient_status = {ingredient.name: (ingredient.name in restricted) for ingredient in ingredients}
+    
+    context = {
+        'ingredients': ingredients,
+        'restricted_ingredients': restricted_ingredients,
+        'ingredient_status': ingredient_status,  # ✅ this was missing
+    }
 
-    return render(request, "recipedb/ingredient_page.html", {
-        "ingredients": ingredients,
-        "restricted_ingredients": restricted_ingredients
-    })
+    return render(request, "recipedb/ingredient_page.html", context)
 
 # handle restricted ingredient toggling
 @require_POST
 @login_required
 def toggle_restricted_ingredient(request):
-    try:
-        data = json.loads(request.body)
-        ingredient_name = data.get('ingredient_name')
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            ingredient_name = data.get("ingredient_name")
+            ingredient = Ingredient.objects.get(name=ingredient_name)
+            profile = UserProfile.objects.get(user=request.user)
 
-        ingredient = Ingredient.objects.get(name=ingredient_name)
-        profile = request.user.userprofile
+            if ingredient in profile.restricted_ingredients.all():
+                profile.restricted_ingredients.remove(ingredient)
+                status = "unrestricted"
+            else:
+                profile.restricted_ingredients.add(ingredient)
+                status = "restricted"
 
-        if ingredient in profile.restricted_ingredients.all():
-            profile.restricted_ingredients.remove(ingredient)
-            status = 'unrestricted'
-        else:
-            profile.restricted_ingredients.add(ingredient)
-            status = 'restricted'
+            return JsonResponse({"status": status})
 
-        return JsonResponse({'status': status})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
-    except Ingredient.DoesNotExist:
-        return JsonResponse({'error': 'Ingredient not found'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 # for viewing a specific recipe
 def recipe_page(request, id):
