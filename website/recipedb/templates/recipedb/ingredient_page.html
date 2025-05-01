@@ -24,7 +24,13 @@
       <tr>
         <td>{{ ingredient.name }}</td>
         <td>{{ ingredient.calories }}</td>
-        <td>{{ ingredient.substitutes.name }}</td>
+        <td>
+          {% for substitute in ingredient.substitutes.all %}
+            {{ substitute.name }}{% if not forloop.last %}, {% endif %}
+          {% empty %}
+            No substitutes available
+          {% endfor %}
+        </td>
         <td>
           <button class="restrict-btn"
           data-name="{{ ingredient.name }}">
@@ -43,6 +49,8 @@
     {% endfor %}
   </tbody>
 </table>
+
+<p><a href="{% url 'add_ingredient' %}">Add an ingredient</a></p>
 
 <script>
   document.querySelectorAll('.restrict-btn').forEach(function(button) {

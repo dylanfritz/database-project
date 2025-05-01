@@ -24,7 +24,7 @@ RecipeIngredientFormSet = inlineformset_factory(
     Recipe, RecipeIngredient, form=RecipeIngredientForm, extra=1, can_delete=True
 )
 
-# TODO
+# TODO-
 # ingredients
 # ingredient form
 class IngredientForm(forms.ModelForm):
@@ -34,6 +34,18 @@ class IngredientForm(forms.ModelForm):
         widgets = {
             'ingredient': forms.Select(attrs={'class': 'ingredient-select'})
         }
+
+class AddIngredientForm(forms.ModelForm):
+    substitutes = forms.ModelMultipleChoiceField(
+        queryset=Ingredient.objects.all(),  # Get all ingredients for substitution options
+        required=False,  # Make this field optional
+        widget=forms.CheckboxSelectMultiple(attrs={  # Use checkboxes for multiple selection
+            'class': 'ingredient-select',
+        })
+    )
+    class Meta:
+        model = Ingredient
+        fields = ['name', 'calories', 'substitutes']
 
 
 # shopping list
