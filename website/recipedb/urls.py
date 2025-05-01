@@ -16,5 +16,4 @@ urlpatterns = [
     path('recipe/<int:recipe_id>/toggle_preference/', views.toggle_preference, name='toggle_preference'),
     path('ingredients/', views.ingredient_page, name='ingredient_page'),
     path('ingredients/toggle_restricted/', views.toggle_restricted_ingredient, name='toggle_restricted_ingredient'),
-    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
 ]
