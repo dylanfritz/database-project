@@ -1,4 +1,7 @@
 <!-- signup.html -->
+{% extends 'base.html' %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,3 +21,4 @@
     <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
 </body>
 </html>
+{% endblock %}
