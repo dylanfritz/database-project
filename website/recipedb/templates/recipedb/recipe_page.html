@@ -1,57 +1,56 @@
-<!-- recipe_page.html -->
-<!-- this is for displaying a specific Recipe -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ recipe.name }}</title>
-</head>
-<body>
-    <h1>{{ recipe.name }}</h1>
+{% extends 'base.html' %}
 
-    <!--Add recipe as preference-->
-    <button id="favorite-btn" data-recipe-id="{{ recipe.id }}">
-        {% if recipe in user.preferred_recipes.all %}
-          ★
-        {% else %}
-          ☆
-        {% endif %}
-      </button>
-      
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script>
-        $('#favorite-btn').click(function (e) {
-          e.preventDefault();
-          const recipeId = $(this).data('recipe-id');
-          const btn = $(this);
-      
-          $.ajax({
-            url: `/recipe/${recipeId}/toggle_preference/`,
-            type: 'POST',
-            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-            success: function (response) {
-              if (response.status === 'added') {
-                btn.text('★');  // filled star
-              } else {
-                btn.text('☆');  // empty star
-              }
-            }
-          });
-        });
-      </script>      
+{% block content %}
+<div class="card">
+  <button id="favorite-btn" data-recipe-id="{{ recipe.id }}">
+    {% if recipe in user.preferred_recipes.all %}
+      ★
+    {% else %}
+      ☆
+    {% endif %}
+  </button>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $('#favorite-btn').click(function (e) {
+      e.preventDefault();
+      const recipeId = $(this).data('recipe-id');
+      const btn = $(this);
+  
+      $.ajax({
+        url: `/recipe/${recipeId}/toggle_preference/`,
+        type: 'POST',
+        headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+        success: function (response) {
+          if (response.status === 'added') {
+            btn.text('★');  // filled star
+          } else {
+            btn.text('☆');  // empty star
+          }
+        }
+      });
+    });
+  </script> 
 
-    <p><strong>Description:</strong> {{ recipe.desc }}</p>
-    <!--TODO: change this to calculate calories based on ingredients list-->
-    <p><strong>Calories:</strong> {{ recipe.calories }}</p>
+  <div class="card-header"><strong>
+    {{ recipe.name }}
+  </strong></div>
+  
+  <div class="card-body">  
 
-    <!--List Ingredients-->
-    <h2>Ingredients</h2>
+    <p class="card-text"><strong>Description:</strong> {{ recipe.desc }}</p>
+    <p class="card-text"><strong>Calories:</strong> {{ recipe.calories }}</p>
+
+    <p class="card-text"><strong>Ingredients</strong></p>
     <ul>
-        {% for ri in recipe.recipe_ingredients.all %}
-    <li>{{ ri.quantity }} {{ ri.unit }} of {{ ri.ingredient.name }}</li>
-        {% endfor %}
+      {% for ri in recipe.recipe_ingredients.all %}
+        <li>{{ ri.quantity }} {{ ri.unit }} of {{ ri.ingredient.name }}</li>
+      {% endfor %}
     </ul>
-    
-    <p><strong>Instructions</strong> {{ recipe.instructions }}</p>
-    <a href="/">Back to Home</a>
-</body>
-</html>
+
+    <p><strong>Instructions:</strong> {{ recipe.instructions }}</p>
+
+    <a href="/" class="btn btn-secondary">Back to Home</a>
+  </div>
+</div>
+{% endblock %}
