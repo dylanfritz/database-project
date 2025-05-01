@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import UserProfile, Ingredient
+from .models import UserProfile, Ingredient, Recipe, ShoppingList, RecipeList
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
 from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
@@ -46,6 +46,15 @@ def ingredient_page(request):
 
     return render(request, "recipedb/ingredient_page.html", context)
 
+# user shopping list
+@login_required
+def add_ingredient_to_shopping_list(request, ingredient_id):
+    if request.user.is_authenticated:
+        ingredient = get_object_or_404(Ingredient, id=ingredient_id)
+        shopping_list, _ = ShoppingList.objects.get_or_create(user=request.user)
+        shopping_list.ingredients.add(ingredient)
+    return redirect('ingredient_page')
+
 # handle restricted ingredient toggling
 @require_POST
 @login_required
@@ -80,6 +89,12 @@ def recipe_page(request, id):
 def recipe_view(request):
     recipes = Recipe.objects.all()
     return render(request, 'recipedb/recipe_view.html', {'recipes': recipes})
+
+# view preferred recipes
+def recipe_list_view(request):
+    profile = request.user.userprofile
+    favorites = profile.preferred_recipes.all()
+    return render(request, 'favorite_recipes.html', {'favorites': favorites})
 
 # for creating a new recipe
 @login_required
