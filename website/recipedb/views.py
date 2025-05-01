@@ -74,7 +74,11 @@ def toggle_restricted_ingredient(request):
 # for viewing a specific recipe
 def recipe_page(request, id):
     recipe = get_object_or_404(Recipe, id=id)
-    return render(request, 'recipedb/recipe_page.html', {'recipe': recipe})
+    is_owner_or_admin = request.user.is_staff or recipe.u_id == request.user
+    return render(request, 'recipedb/recipe_page.html', {
+        'recipe': recipe,
+        'is_owner_or_admin': is_owner_or_admin,
+    })
 
 # for viewing a list of all recipes
 def recipe_view(request):
@@ -101,6 +105,31 @@ def add_recipe(request):
     return render(request, 'recipedb/add_recipe.html', {
         'form': form,
         'formset': formset,
+    })
+
+@login_required
+def edit_recipe(request, id):
+    # Get the recipe by ID or return 404 if not found
+    recipe = get_object_or_404(Recipe, id=id)
+
+    # If the request is POST, it means the user is submitting the form to update the recipe
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, instance=recipe)  # Pre-fill the form with the existing recipe data
+        formset = RecipeIngredientFormSet(request.POST, instance=recipe)  # Pre-fill the formset with ingredients
+
+        if form.is_valid() and formset.is_valid():
+            form.save()  # Save the updated recipe
+            formset.save()  # Save the updated ingredients
+            return redirect('recipe_page', id=recipe.id)  # Redirect to the recipe's page after saving
+    else:
+        # If GET request, just load the form with current recipe data
+        form = RecipeForm(instance=recipe)
+        formset = RecipeIngredientFormSet(instance=recipe)
+
+    return render(request, 'recipedb/edit_recipe.html', {
+        'form': form,
+        'formset': formset,
+        'recipe': recipe,
     })
 
 # handle adding a recipe to user's preferences

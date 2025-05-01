@@ -1,0 +1,18 @@
+<h1>Edit Recipe: {{ recipe.name }}</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Display the recipe fields (name, description, etc.) -->
+    
+    <h3>Ingredients</h3>
+    {{ formset.management_form }}  <!-- Required for formset management -->
+    {% for form in formset %}
+        <div>
+            {{ form.as_p }}  <!-- Display ingredient fields (e.g., name, quantity, unit) -->
+        </div>
+    {% endfor %}
+    
+    <button type="submit">Save changes</button>
+</form>
+
+<a href="{% url 'recipe_page' id=recipe.id %}">Back to Recipe</a>

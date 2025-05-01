@@ -51,6 +51,11 @@
     <p><strong>Instructions:</strong> {{ recipe.instructions }}</p>
 
     <a href="/" class="btn btn-secondary">Back to Home</a>
+    {% if is_owner_or_admin %}
+    <a href="{% url 'edit_recipe' id=recipe.id %}">
+      <button>Edit Recipe</button>
+    </a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
