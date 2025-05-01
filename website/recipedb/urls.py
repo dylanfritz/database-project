@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -14,4 +15,5 @@ urlpatterns = [
     path('recipe/<int:recipe_id>/toggle_preference/', views.toggle_preference, name='toggle_preference'),
     path('ingredients/', views.ingredient_page, name='ingredient_page'),
     path('ingredients/toggle_restricted/', views.toggle_restricted_ingredient, name='toggle_restricted_ingredient'),
+    path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
 ]
