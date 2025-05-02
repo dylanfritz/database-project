@@ -173,7 +173,7 @@ def add_recipe(request):
             recipe.save()
             formset.instance = recipe
             formset.save()
-            return redirect('home')  # or wherever
+            return redirect('home')
     else:
         form = RecipeForm()
         formset = RecipeIngredientFormSet()

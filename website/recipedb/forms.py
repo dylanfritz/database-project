@@ -11,8 +11,6 @@ class RecipeForm(forms.ModelForm):
 
 # this form is for adding ingredients to a recipe
 class RecipeIngredientForm(forms.ModelForm):
-    # TODO
-    # Add ability to make new ingredient if not in dropdown list
     class Meta:
         model = RecipeIngredient
         fields = ['ingredient', 'quantity', 'unit']
@@ -20,6 +18,7 @@ class RecipeIngredientForm(forms.ModelForm):
             'ingredient': forms.Select(attrs={'class': 'ingredient-select'})
         }
 
+# Allows multiple RecipeIngredientForm forms to connect to one Recipe
 RecipeIngredientFormSet = inlineformset_factory(
     Recipe, RecipeIngredient, form=RecipeIngredientForm, extra=1, can_delete=True
 )
@@ -60,8 +59,6 @@ class ShoppingListItemForm(forms.ModelForm):
     class Meta:
         model = ShoppingListItem
         fields = ['ingredient', 'quantity', 'unit']
-
-# recipe list
 
 # account registration
 class SignUpForm(forms.ModelForm):
