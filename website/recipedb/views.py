@@ -233,16 +233,18 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            # create UserProfile
-            UserProfile.objects.create(user=user)
-            # Log the user in after sign-up
+            user = form.save(commit=False)  # Don’t save to DB yet
+            password = form.cleaned_data['password']
+            user.set_password(password)  # Hash the password
+            user.save()  # Now save the user with hashed password
+            UserProfile.objects.get_or_create(user=user)
             login(request, user)
-            return redirect('home')  # Redirect to the homepage or any page you like
+            return redirect('home')
     else:
         form = SignUpForm()
 
     return render(request, 'recipedb/signup.html', {'form': form})
+
 
 def login_view(request):
     if request.method == 'POST':
