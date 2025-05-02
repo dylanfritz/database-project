@@ -15,6 +15,7 @@ urlpatterns = [
     path('recipe/edit/<int:id>/', views.edit_recipe, name='edit_recipe'),
     path('recipe/<int:recipe_id>/toggle_preference/', views.toggle_preference, name='toggle_preference'),
     path('ingredients/', views.ingredient_page, name='ingredient_page'),
+    path('add-ingredient/', views.add_ingredient, name='add_ingredient'),
     path('ingredients/toggle_restricted/', views.toggle_restricted_ingredient, name='toggle_restricted_ingredient'),
     path('shopping-list/', views.shopping_list_page, name='shopping_list'),
 ]

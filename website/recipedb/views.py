@@ -46,6 +46,22 @@ def ingredient_page(request):
 
     return render(request, "recipedb/ingredient_page.html", context)
 
+
+# for adding ingredients
+def add_ingredient(request):
+    if request.method == 'POST':
+        form = AddIngredientForm(request.POST)
+        if form.is_valid():
+            ingredient= form.save()  # Save the new ingredient to the database
+            substitutes = form.cleaned_data['substitutes']
+            ingredient.substitutes.set(substitutes)  # Link the selected substitutes
+            
+            return redirect('ingredient_page')  # Redirect to the ingredient list or another page
+    else:
+        form = AddIngredientForm()  # Empty form for GET request
+    
+    return render(request, 'recipedb/add_ingredient.html', {'form': form})
+
 # user shopping list
 # add ingredients to shopping list
 @login_required
