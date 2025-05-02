@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Your Shopping List</h2>
+
+
+<ul>
+  {% for item in items %}
+    <li>{{ item.ingredient.name }} - {{ item.quantity }} {{ item.unit }}</li>
+  {% empty %}
+    <li>No ingredients yet.</li>
+  {% endfor %}
+</ul>
+
+<h3>Add Ingredient</h3>
+<form method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add</button>
+</form>
+
+{% endblock %}

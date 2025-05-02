@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from .models import UserProfile, Ingredient, Recipe, ShoppingList, RecipeList
+from .models import UserProfile, Ingredient, Recipe, ShoppingList, ShoppingListItem, RecipeList
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
-from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet
+from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet, AddToShoppingListForm, AddIngredientForm
 from django.http import JsonResponse
 import json
 
@@ -47,6 +47,7 @@ def ingredient_page(request):
     return render(request, "recipedb/ingredient_page.html", context)
 
 # user shopping list
+# add ingredients to shopping list
 @login_required
 def add_ingredient_to_shopping_list(request, ingredient_id):
     if request.user.is_authenticated:
@@ -54,6 +55,35 @@ def add_ingredient_to_shopping_list(request, ingredient_id):
         shopping_list, _ = ShoppingList.objects.get_or_create(user=request.user)
         shopping_list.ingredients.add(ingredient)
     return redirect('ingredient_page')
+
+
+@login_required
+def shopping_list_page(request):
+    shopping_list, _ = ShoppingList.objects.get_or_create(u_id=request.user)
+
+    if request.method == 'POST':
+        form = AddToShoppingListForm(request.POST)
+        if form.is_valid():
+            ingredient = form.cleaned_data['ingredient']
+            quantity = form.cleaned_data['quantity']
+            unit = form.cleaned_data['unit']
+
+            ShoppingListItem.objects.create(
+                shopping_list=shopping_list,
+                ingredient=ingredient,
+                quantity=quantity,
+                unit=unit
+            )
+            return redirect('shopping_list')
+    else:
+        form = AddToShoppingListForm()
+
+    items = ShoppingListItem.objects.filter(shopping_list=shopping_list)
+
+    return render(request, 'recipedb/shopping_list.html', {
+        'form': form,
+        'items': items,
+    })
 
 # handle restricted ingredient toggling
 @require_POST

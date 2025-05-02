@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import inlineformset_factory
-from .models import Recipe, Ingredient, RecipeIngredient
+from .models import Recipe, Ingredient, RecipeIngredient, ShoppingList, ShoppingListItem
 
 # recipes
 class RecipeForm(forms.ModelForm):
@@ -24,7 +24,7 @@ RecipeIngredientFormSet = inlineformset_factory(
     Recipe, RecipeIngredient, form=RecipeIngredientForm, extra=1, can_delete=True
 )
 
-# TODO
+# TODO-
 # ingredients
 # ingredient form
 class IngredientForm(forms.ModelForm):
@@ -35,8 +35,32 @@ class IngredientForm(forms.ModelForm):
             'ingredient': forms.Select(attrs={'class': 'ingredient-select'})
         }
 
+class AddIngredientForm(forms.ModelForm):
+    substitutes = forms.ModelMultipleChoiceField(
+        queryset=Ingredient.objects.all(),  # Get all ingredients for substitution options
+        required=False,  # Make this field optional
+        widget=forms.CheckboxSelectMultiple(attrs={  # Use checkboxes for multiple selection
+            'class': 'ingredient-select',
+        })
+    )
+    class Meta:
+        model = Ingredient
+        fields = ['name', 'calories', 'substitutes']
+
 
 # shopping list
+# form for adding ingredients to list
+class AddToShoppingListForm(forms.Form):
+    ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all())
+    quantity = forms.DecimalField(max_digits=5, decimal_places=2)
+    unit = forms.CharField(max_length=20)
+
+
+class ShoppingListItemForm(forms.ModelForm):
+    class Meta:
+        model = ShoppingListItem
+        fields = ['ingredient', 'quantity', 'unit']
+
 # recipe list
 
 # account registration

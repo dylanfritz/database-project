@@ -79,8 +79,16 @@ class RecipeList(List):
 # Shopping List entity (list subclass)
 #   - lists Ingredients, set and edited by User
 class ShoppingList(List):
-    ingredients = models.ManyToManyField('Ingredient', related_name='in_shopping_list')
+    ingredients = models.ManyToManyField(
+        Ingredient, through='ShoppingListItem', related_name='in_shopping_lists'
+    )
 
+class ShoppingListItem(models.Model):
+    shopping_list = models.ForeignKey(ShoppingList, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=5, decimal_places=2)
+    unit = models.CharField(max_length=20)
+    
 # User Restrictions (Ingredient), M:N relationship
 # User.add_to_class('restricted_ingredients', models.ManyToManyField(Ingredient, related_name='restricted_by'))
 
