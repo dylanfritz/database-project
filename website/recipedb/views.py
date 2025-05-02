@@ -161,6 +161,12 @@ def recipe_list_view(request):
     favorites = profile.preferred_recipes.all()
     return render(request, 'favorite_recipes.html', {'favorites': favorites})
 
+# view preferred recipes
+def recipe_list_view(request):
+    profile = request.user.userprofile
+    favorites = profile.preferred_recipes.all()
+    return render(request, 'favorite_recipes.html', {'favorites': favorites})
+
 # for creating a new recipe
 @login_required
 def add_recipe(request):
