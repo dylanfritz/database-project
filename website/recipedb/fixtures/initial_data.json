@@ -1,0 +1,115 @@
+[
+{
+  "model": "recipedb.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "preferred_recipes": [],
+    "restricted_ingredients": []
+  }
+},
+{
+  "model": "recipedb.userprofile",
+  "pk": 3,
+  "fields": {
+    "user": 2,
+    "preferred_recipes": [
+      1
+    ],
+    "restricted_ingredients": [
+      "Butter"
+    ]
+  }
+},
+{
+  "model": "recipedb.ingredient",
+  "pk": "Butter",
+  "fields": {
+    "calories": 204,
+    "substitutes": []
+  }
+},
+{
+  "model": "recipedb.ingredient",
+  "pk": "Milk",
+  "fields": {
+    "calories": 102,
+    "substitutes": []
+  }
+},
+{
+  "model": "recipedb.ingredient",
+  "pk": "Water",
+  "fields": {
+    "calories": 0,
+    "substitutes": []
+  }
+},
+{
+  "model": "recipedb.recipe",
+  "pk": 1,
+  "fields": {
+    "u_id": 2,
+    "prep_time": 50,
+    "name": "BREADD",
+    "desc": "I LOVE THIS BREAD IT IS AMAZING",
+    "instructions": "1. Prepare yeast, flour, water\r\n2. Put in oven\r\n3. BREADDDD"
+  }
+},
+{
+  "model": "recipedb.recipe",
+  "pk": 2,
+  "fields": {
+    "u_id": 2,
+    "prep_time": 100,
+    "name": "Water",
+    "desc": "Water of the gods!",
+    "instructions": "1. Climb mountain  \r\n2. Cross desert \r\n3. Go back home and drink tap water"
+  }
+},
+{
+  "model": "recipedb.recipe",
+  "pk": 3,
+  "fields": {
+    "u_id": 2,
+    "prep_time": 50,
+    "name": "Eggs",
+    "desc": "This simple yet expensive breakfast recipe will have you feasting like a king!",
+    "instructions": "1. Become member of crime syndicate \r\n2. Earn lots of money \r\n3. Purchase one-half dozen of eggs \r\n4. Avoid jealous stares from the poors"
+  }
+},
+{
+  "model": "recipedb.list",
+  "pk": 1,
+  "fields": {
+    "name": "",
+    "u_id": 2,
+    "desc": ""
+  }
+},
+{
+  "model": "recipedb.shoppinglist",
+  "pk": 1,
+  "fields": {}
+},
+{
+  "model": "recipedb.shoppinglistitem",
+  "pk": 1,
+  "fields": {
+    "shopping_list": 1,
+    "ingredient": "Butter",
+    "quantity": "3.00",
+    "unit": "sticks"
+  }
+},
+{
+  "model": "recipedb.shoppinglistitem",
+  "pk": 2,
+  "fields": {
+    "shopping_list": 1,
+    "ingredient": "Water",
+    "quantity": "3.00",
+    "unit": "cups"
+  }
+}
+]
