@@ -4,13 +4,19 @@
 <h2>Your Shopping List</h2>
 
 
-<ul>
-  {% for item in items %}
-    <li>{{ item.ingredient.name }} - {{ item.quantity }} {{ item.unit }}</li>
-  {% empty %}
-    <li>No ingredients yet.</li>
-  {% endfor %}
-</ul>
+<div class='card-body'>
+  <ul>
+    {% for item in items %}
+      <li class="'card-text">{{ item.ingredient.name }} - {{ item.quantity }} {{ item.unit }}</li>
+      <form method="POST" action="{% url 'remove_from_shopping_list' item.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit">Remove</button>
+      </form>
+    {% empty %}
+      <li>No ingredients yet.</li>
+    {% endfor %}
+  </ul>
+</div>
 
 <h3>Add Ingredient</h3>
 <form method="POST">

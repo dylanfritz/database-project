@@ -18,4 +18,6 @@ urlpatterns = [
     path('add-ingredient/', views.add_ingredient, name='add_ingredient'),
     path('ingredients/toggle_restricted/', views.toggle_restricted_ingredient, name='toggle_restricted_ingredient'),
     path('shopping-list/', views.shopping_list_page, name='shopping_list'),
+    path('shopping-list/remove/<int:item_id>/', views.remove_from_shopping_list, name='remove_from_shopping_list'),
+
 ]

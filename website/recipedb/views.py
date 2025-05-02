@@ -63,16 +63,6 @@ def add_ingredient(request):
     return render(request, 'recipedb/add_ingredient.html', {'form': form})
 
 # user shopping list
-# add ingredients to shopping list
-@login_required
-def add_ingredient_to_shopping_list(request, ingredient_id):
-    if request.user.is_authenticated:
-        ingredient = get_object_or_404(Ingredient, id=ingredient_id)
-        shopping_list, _ = ShoppingList.objects.get_or_create(user=request.user)
-        shopping_list.ingredients.add(ingredient)
-    return redirect('ingredient_page')
-
-
 @login_required
 def shopping_list_page(request):
     shopping_list, _ = ShoppingList.objects.get_or_create(u_id=request.user)
@@ -100,6 +90,26 @@ def shopping_list_page(request):
         'form': form,
         'items': items,
     })
+
+# add ingredients to shopping list
+@login_required
+def add_ingredient_to_shopping_list(request, ingredient_id):
+    if request.user.is_authenticated:
+        ingredient = get_object_or_404(Ingredient, id=ingredient_id)
+        shopping_list, _ = ShoppingList.objects.get_or_create(user=request.user)
+        shopping_list.ingredients.add(ingredient)
+    return redirect('ingredient_page')
+
+# remove ingredient from shopping list
+@login_required
+def remove_from_shopping_list(request, item_id):
+    item = get_object_or_404(ShoppingListItem, id=item_id)
+    # Make sure user owns the shopping list
+    if item.shopping_list.u_id != request.user:
+        return redirect('home')
+    
+    item.delete()
+    return redirect('shopping_list') 
 
 # handle restricted ingredient toggling
 @require_POST

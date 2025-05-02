@@ -55,7 +55,7 @@ class AddToShoppingListForm(forms.Form):
     quantity = forms.DecimalField(max_digits=5, decimal_places=2)
     unit = forms.CharField(max_length=20)
 
-
+# individual shopping list item
 class ShoppingListItemForm(forms.ModelForm):
     class Meta:
         model = ShoppingListItem
