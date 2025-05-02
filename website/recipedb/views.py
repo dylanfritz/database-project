@@ -23,29 +23,34 @@ def profile(request):
 
 # for viewing list of ingredients in database
 def ingredient_page(request):
+    query = request.GET.get('q', '')
     ingredients = Ingredient.objects.all()
-    restricted = set()
 
+    if query:
+        ingredients = ingredients.filter(name__icontains=query)
+
+    restricted = set()
+    restricted_ingredients = set()
+
+    # Request restricted ingredients for logged-in user
     if request.user.is_authenticated:
         try:
             profile = request.user.userprofile
-            restricted = request.user.userprofile.restricted_ingredients.all().values_list('name', flat=True)
+            restricted = profile.restricted_ingredients.all().values_list('name', flat=True)
+            restricted_ingredients = set(restricted)
         except UserProfile.DoesNotExist:
             pass
 
-    ingredient_status = {ingredient.name: (ingredient.name in restricted) for ingredient in ingredients}
-
-    restricted_ingredients = set(profile.restricted_ingredients.values_list("name", flat=True))
-    ingredient_status = {ingredient.name: (ingredient.name in restricted) for ingredient in ingredients}
+    ingredient_status = {ingredient.name: (ingredient.name in restricted_ingredients) for ingredient in ingredients}
     
     context = {
         'ingredients': ingredients,
         'restricted_ingredients': restricted_ingredients,
-        'ingredient_status': ingredient_status,  # ✅ this was missing
+        'ingredient_status': ingredient_status,
+        'query': query,  # so the form can preserve the input
     }
 
     return render(request, "recipedb/ingredient_page.html", context)
-
 
 # for adding ingredients
 def add_ingredient(request):

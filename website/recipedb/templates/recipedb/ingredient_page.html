@@ -4,10 +4,11 @@
 
 <h1>All Ingredients</h1>
 
-<form method="get" action=".">
+<form method="GET" action="{% url 'ingredient_page' %}">
   <input type="text" name="q" placeholder="Search ingredients..." value="{{ query|default_if_none:'' }}">
   <button type="submit">Search</button>
 </form>
+
 
 <table border="1" cellspacing="0" cellpadding="8">
   <thead>
