@@ -13,6 +13,7 @@ import json
 from django.http import HttpResponse
 from .models import Recipe
 
+@login_required(login_url='login')
 def home(request):
     return render(request, 'recipedb/home.html')
 
