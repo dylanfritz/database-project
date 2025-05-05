@@ -4,7 +4,7 @@ from django.contrib.auth import login
 from .models import UserProfile, Ingredient, Recipe, ShoppingList, ShoppingListItem, RecipeList
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
-from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet, AddToShoppingListForm, AddIngredientForm
+from .forms import RecipeForm, SignUpForm, RecipeIngredientFormSet, ShoppingListItemForm, AddIngredientForm
 from django.http import JsonResponse
 import json
 
@@ -74,7 +74,7 @@ def shopping_list_page(request):
     shopping_list, _ = ShoppingList.objects.get_or_create(u_id=request.user)
 
     if request.method == 'POST':
-        form = AddToShoppingListForm(request.POST)
+        form = ShoppingListItemForm(request.POST)
         if form.is_valid():
             ingredient = form.cleaned_data['ingredient']
             quantity = form.cleaned_data['quantity']
@@ -88,7 +88,7 @@ def shopping_list_page(request):
             )
             return redirect('shopping_list')
     else:
-        form = AddToShoppingListForm()
+        form = ShoppingListItemForm()
 
     items = ShoppingListItem.objects.filter(shopping_list=shopping_list)
 

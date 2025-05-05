@@ -1,7 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User # django built-in user model, no need for custom user model
+from decimal import Decimal
 
 # Create your models here.
+UNIT_CHOICES = {
+    # "value", "human-readable name"
+    ("grams", "grams"),
+    ("milliliters", "mL"),
+    ("liters", "L"),
+    ("cups", "cups"),
+    ("teaspoons", "tsp"),
+}
+
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -19,6 +29,7 @@ class UserProfile(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=30, primary_key=True)
     calories = models.PositiveIntegerField()
+    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='grams')
 
     # Ingredient-Ingredient SUBSTITUTES relationship
     # symmetrical; if x subs y then y subs x
@@ -40,14 +51,20 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-
+    
+    def total_recipe_calories(self):
+        calories = Decimal(0)
+        for ing in self.recipe_ingredients.select_related('ingredient'):
+            calories += Decimal(ing.ingredient.calories)
+            
 # Recipe-Ingredient CALLS_FOR relationship model
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_ingredients')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='ingredients')
 
     quantity = models.DecimalField(max_digits=5, decimal_places=2) # max 999.99
-    unit = models.CharField(max_length=20) # e.g., 'tsp', 'cups', 'grams'
+
+    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='grams') # e.g., 'tsp', 'cups', 'grams'
 
     def __str__(self):
         return f"{self.quantity} {self.unit} of {self.ingredient.name} in {self.recipe.name}"
@@ -87,11 +104,7 @@ class ShoppingListItem(models.Model):
     shopping_list = models.ForeignKey(ShoppingList, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=5, decimal_places=2)
-    unit = models.CharField(max_length=20)
-    
-# User Restrictions (Ingredient), M:N relationship
-# User.add_to_class('restricted_ingredients', models.ManyToManyField(Ingredient, related_name='restricted_by'))
-
+    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='grams')
 
 ###
 # After making a model, don't forget to

@@ -49,11 +49,6 @@ class AddIngredientForm(forms.ModelForm):
 
 # shopping list
 # form for adding ingredients to list
-class AddToShoppingListForm(forms.Form):
-    ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all())
-    quantity = forms.DecimalField(max_digits=5, decimal_places=2)
-    unit = forms.CharField(max_length=20)
-
 # individual shopping list item
 class ShoppingListItemForm(forms.ModelForm):
     class Meta:
