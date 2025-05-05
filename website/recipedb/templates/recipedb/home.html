@@ -19,7 +19,9 @@
     <h1>Home of the best recipes!</h1>
     <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
     <p><a href="/login/">Login</a></p>
+    {% if user.is_staff %}
     <p><a href="/admin/">Admin</a></p>
+    {% endif %}
     <p><a href="/add-recipe/">Add a recipe!</a></p>
     <p><a href="/recipe-view/">View recipes!</a></p>
     <p><a href="{% url 'ingredient_page' %}">View All Ingredients</a></p>

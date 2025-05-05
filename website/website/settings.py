@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'recipedb'
+    'recipedb',
+    'bootstrap5',
+
 ]
 
 LOGIN_REDIRECT_URL = '/'
