@@ -29,7 +29,7 @@ class Ingredient(models.Model):
 
 # Recipe Entity
 class Recipe(models.Model):
-    u_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    u_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
     prep_time = models.PositiveIntegerField(help_text="Preparation time in minutes")
     name = models.CharField(max_length=100)
     desc = models.TextField(blank=True)
