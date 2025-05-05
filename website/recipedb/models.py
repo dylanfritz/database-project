@@ -6,11 +6,27 @@ from decimal import Decimal
 UNIT_CHOICES = {
     # "value", "human-readable name"
     ("grams", "grams"),
-    ("milliliters", "mL"),
+    ("ml", "mL"),
     ("liters", "L"),
     ("cups", "cups"),
-    ("teaspoons", "tsp"),
+    ("tsp", "tsp"),
+    ("tbsp", "tbsp"),
 }
+
+UNIT_CONVERSIONS = {
+    'grams': 1,
+    'ml': 1, # 1 ml ~= 1g
+    'liters': 1000, # l ~= 100g
+    'cups': 240, # 1 cup ~= 240g
+    'tsp': 5, # 1 tsp ~= 5g
+    'tbsp': 15, # 1 tbsp ~= 15g
+}
+
+def convert_to_grams(quantity, unit):
+    factor = UNIT_CONVERSIONS.get(unit)
+    if factor:
+        return quantity * factor
+    return None
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
@@ -28,7 +44,7 @@ class UserProfile(models.Model):
 # Ingredient entity
 class Ingredient(models.Model):
     name = models.CharField(max_length=30, primary_key=True)
-    calories = models.PositiveIntegerField()
+    calories = models.PositiveIntegerField(help_text="per 100g")
     unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='grams')
 
     # Ingredient-Ingredient SUBSTITUTES relationship
@@ -52,10 +68,15 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
     
-    def total_recipe_calories(self):
-        calories = Decimal(0)
-        for ing in self.recipe_ingredients.select_related('ingredient'):
-            calories += Decimal(ing.ingredient.calories)
+    def calculate_recipe_calories(self):
+        total_calories = 0
+        for ing in self.recipe_ingredients.all():
+            grams = convert_to_grams(float(ing.quantity), ing.unit)
+            if grams is not None:
+                calories = (ing.ingredient.calories / 100) * grams
+                total_calories += calories
+        return total_calories
+
             
 # Recipe-Ingredient CALLS_FOR relationship model
 class RecipeIngredient(models.Model):
